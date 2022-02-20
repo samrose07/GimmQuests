@@ -87,6 +87,14 @@ public class ReticleBehavior : MonoBehaviour
                 }
                 break;
             case "e":
+                if(CheckTag(raycastedObj) && raycastedObj.name.Contains("PressableButton"))
+                {
+                    GuessButtons gb = raycastedObj.GetComponent<GuessButtons>();
+                    if(gb != null)
+                    {
+                        gb.ThisButtonPressed();
+                    }
+                }
                 break;
         }
     }
