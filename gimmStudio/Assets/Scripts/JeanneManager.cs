@@ -256,7 +256,7 @@ public class JeanneManager : MonoBehaviour
     private void ShowAnswers()
     {
         answerPanel.SetActive(true);
-        print("hey, i got here bro!");
+        //print("hey, i got here bro!");
     }
 
     private void HidePanel(GameObject panel)

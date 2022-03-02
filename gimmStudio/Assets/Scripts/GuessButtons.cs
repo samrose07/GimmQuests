@@ -9,6 +9,7 @@ public class GuessButtons : MonoBehaviour
 
     public void ThisButtonPressed()
     {
+        print("pressed");
         JeanneManager jm = GameObject.Find("JeanneManager").GetComponent<JeanneManager>();
         if (jm != null) jm.AnswerGiven(this, whichButton);
     }
