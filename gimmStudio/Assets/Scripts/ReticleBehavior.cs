@@ -34,7 +34,11 @@ public class ReticleBehavior : MonoBehaviour
     //need the inventory to access
     [SerializeField] private InventoryHandler inventoryHandler;
     // Start is called before the first frame update
-
+    private int holdTime = 0;
+    private int holdThreshold = 100;
+    public bool objectHeld = false;
+    public GameObject heldObj;
+    [SerializeField] private HoldObjectArea hoa;
     // Update is called once per frame
     void Update()
     {
@@ -43,6 +47,8 @@ public class ReticleBehavior : MonoBehaviour
 
         //check for some inputs
         HandleSomeInputs();
+
+        //print(heldObj);
     }
 
     #region Raycast things, man
@@ -61,7 +67,6 @@ public class ReticleBehavior : MonoBehaviour
             raycastedObj = hit.transform.gameObject;
             if(raycastedObj.tag == "EllertsonTrack")
             {
-                print("Hit point is at " + hit.point);
                 raycastedObj.transform.position = Vector3.MoveTowards(raycastedObj.transform.position, screenRay.GetPoint(2.0f), 0.01f);
             }
         }
@@ -87,7 +92,7 @@ public class ReticleBehavior : MonoBehaviour
                 }
                 break;
             case "e":
-                if(CheckTag(raycastedObj) && raycastedObj.name.Contains("PressableButton"))
+                if(CheckTag(raycastedObj) && raycastedObj.name.Contains("3 collider"))
                 {
                     GuessButtons gb = raycastedObj.GetComponent<GuessButtons>();
                     if(gb != null)
@@ -97,8 +102,55 @@ public class ReticleBehavior : MonoBehaviour
                 }
                 break;
         }
+
+        if (Input.GetKey("e"))
+        {
+            if(!objectHeld)
+            {
+                holdTime++;
+                
+            }
+            
+        }
+        if (Input.GetKeyUp("e"))
+        {
+            if (holdTime >= holdThreshold && !objectHeld)
+            {
+                print(raycastedObj.name);
+                if(raycastedObj.name.Contains("pickup")) PickupObject(raycastedObj);
+                holdTime = 0;
+                return;
+            }
+            if(objectHeld)
+            {
+                DropObject(heldObj);
+            }
+            holdTime = 0;
+        }
     }
 
+    private void PickupObject(GameObject obj)
+    {
+        heldObj = obj;
+        objectHeld = true;
+        hoa.HoldObject(heldObj);
+        Rigidbody rb;
+        rb = heldObj.GetComponent<Rigidbody>();
+        rb.isKinematic = true;
+
+    }
+
+    private void DropObject(GameObject obj)
+    {
+        Rigidbody rb;
+        rb = heldObj.GetComponent<Rigidbody>();
+        rb.isKinematic = false;
+        hoa.StopHoldObject(obj);
+        heldObj = null;
+        objectHeld = false;
+
+        
+    }
     private bool CheckActiveState(GameObject g)
     {
         return g.activeInHierarchy;
@@ -108,5 +160,7 @@ public class ReticleBehavior : MonoBehaviour
     {
         return g.CompareTag("interactable");
     }
+
+    
     #endregion
 }
