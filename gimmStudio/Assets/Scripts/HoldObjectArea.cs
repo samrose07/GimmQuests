@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HoldObjectArea : MonoBehaviour
 {
-    [SerializeField] private GameObject holdArea;
+    [SerializeField] public GameObject holdArea;
     [SerializeField] private bool isHolding = false;
     private GameObject theObjectToHold;
 

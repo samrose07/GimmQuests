@@ -137,7 +137,8 @@ public class ReticleBehavior : MonoBehaviour
         Rigidbody rb;
         rb = heldObj.GetComponent<Rigidbody>();
         rb.isKinematic = true;
-
+        PlaceableObject pO = heldObj.GetComponent<PlaceableObject>();
+        pO.isHeld = true;
     }
 
     private void DropObject(GameObject obj)
@@ -146,10 +147,12 @@ public class ReticleBehavior : MonoBehaviour
         rb = heldObj.GetComponent<Rigidbody>();
         rb.isKinematic = false;
         hoa.StopHoldObject(obj);
+        PlaceableObject pO = heldObj.GetComponent<PlaceableObject>();
+        pO.isHeld = false;
         heldObj = null;
         objectHeld = false;
-
         
+
     }
     private bool CheckActiveState(GameObject g)
     {

@@ -11,10 +11,22 @@ using UnityEngine;
 public class PlaceableObject : MonoBehaviour
 {
     public bool isHeld = false;
+    public bool isHeldinArea = false;
+    public GameObject heldPedestal;
+    public PedestalHoldArea pha;
     public string name;
 
     private void Start()
     {
         name = gameObject.name;
+    }
+
+    private void Update()
+    {
+        if(isHeldinArea)
+        {
+            pha = gameObject.GetComponentInParent<PedestalHoldArea>();
+            if (pha != null) heldPedestal = pha.gameObject;
+        }
     }
 }
