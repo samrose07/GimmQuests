@@ -52,7 +52,6 @@ public class JacksLilBuddy : MonoBehaviour
     void Update()
     {
         UpdateState(state);
-        print(state);
     }
 
     void UpdateState(State currentState)
@@ -123,7 +122,7 @@ public class JacksLilBuddy : MonoBehaviour
                     state = State.Place;
                 }
             }
-            else
+            if(!isPlayerObjectOnPedestal)
             {
                 agent.SetDestination(new Vector3(7, 2, 10));
                 float d = Vector3.Distance(agent.transform.position, agent.destination);
@@ -143,6 +142,8 @@ public class JacksLilBuddy : MonoBehaviour
         Rigidbody rb;
         rb = g.GetComponent<Rigidbody>();
         rb.isKinematic = true;
+        PlaceableObject p = g.GetComponent<PlaceableObject>();
+        p.isHeld = true;
         if(!isPlayerObjectOnPedestal)
         {
             agent.SetDestination(new Vector3(7, 2, 10));
@@ -161,7 +162,7 @@ public class JacksLilBuddy : MonoBehaviour
         Rigidbody rb;
         rb = objectToGet.GetComponent<Rigidbody>();
         rb.isKinematic = false;
-        if(!isPlayerObjectOnPedestal)
+        if (!isPlayerObjectOnPedestal)
         {
             hoa.StopHoldObject(objectToGet);
         }

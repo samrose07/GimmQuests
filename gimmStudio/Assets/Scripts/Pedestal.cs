@@ -14,19 +14,9 @@ public class Pedestal : MonoBehaviour
     public bool hasCorrectGO = false;
     public bool isPlayerPedestal = false;
 
-    private void Start()
-    {
-        
-    }
-
-    private void Update()
-    {
-        
-    }
 
     public void SendJLB(GameObject toGet, bool remove)
     {
-        
         string name = toGet.name + " for robot";
         toGet = GameObject.Find(name);
         if(remove)
@@ -39,7 +29,7 @@ public class Pedestal : MonoBehaviour
         }
         if(!remove)
         {
-            print(remove);
+           
             if(buddyPedestal.hasObject)
             {
                 return;

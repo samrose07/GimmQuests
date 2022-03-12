@@ -15,10 +15,12 @@ public class PlaceableObject : MonoBehaviour
     public GameObject heldPedestal;
     public PedestalHoldArea pha;
     public string name;
+    Rigidbody rb;
 
     private void Start()
     {
         name = gameObject.name;
+        rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -28,5 +30,7 @@ public class PlaceableObject : MonoBehaviour
             pha = gameObject.GetComponentInParent<PedestalHoldArea>();
             if (pha != null) heldPedestal = pha.gameObject;
         }
+       // if (isHeld || isHeldinArea) rb.isKinematic = true;
+        //else rb.isKinematic = false;
     }
 }
