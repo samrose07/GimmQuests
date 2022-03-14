@@ -14,11 +14,15 @@ public class ButtonPress : MonoBehaviour
 
     private void Start()
     {
+        //making sure its not been pressed
         isPressed = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        //starting that press. Jumps the button to a "down" position to give appearance of pressing it!
+        //invokes the onPress unity method.
+        //TODO: add a sound effect?
         if(!isPressed)
         {
             
@@ -26,13 +30,15 @@ public class ButtonPress : MonoBehaviour
             presser = other.gameObject;
             onPress.Invoke();
             isPressed = true;
-            print(presser.gameObject.name);
+            //print(presser.gameObject.name);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        print("exit");
+       // print("exit");
+       //makes sure that the presser of the button is the one exiting the collision,
+       //resets the position of the button, invokes the onRelease unity method.
         if(other.gameObject == presser)
         {
             print("released");

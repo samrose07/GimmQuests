@@ -59,6 +59,7 @@ public class JeanneManager : MonoBehaviour
 
     #endregion
 
+    #region start and update
     // Start is called before the first frame update
     void Start()
     {
@@ -95,18 +96,6 @@ public class JeanneManager : MonoBehaviour
         }
     }
 
-    /* TODO: Attach in game meaning to the buttons
-     * 
-     * 
-     *  i.e. once first song is chosen, attach the
-     *  audio clips to connected "ClipToUse" clips; DONE
-     *  
-     *  make a method to change Song and "clipTOUse" vars NOT NEEDED AND DONE
-     *  
-     *  make a method to play the clips DONE
-     *  
-     */
-
     // Update is called once per frame
     void Update()
     {
@@ -139,14 +128,9 @@ public class JeanneManager : MonoBehaviour
                 break;
         }
     }
+    #endregion
 
-    //TODO:
-    /*Public var for each button text
-     * assign the text of each button when the correct button is selected
-     * assign the text of each other button when the correct button is selected
-     */
-
-
+    #region created methods
     private bool InitialSoundPlayed(AudioClip c, bool played)
     {
         //this method takes in an audioclip to play and checks if its been played already.
@@ -230,7 +214,7 @@ public class JeanneManager : MonoBehaviour
 
     private Song RandomGenerator()
     {
-
+        //lets pick a new song to use. If we don't have anymore, return the NULL state!
         Song ret;
         if(songList.Count <= 0)
         {
@@ -243,6 +227,7 @@ public class JeanneManager : MonoBehaviour
 
     private IEnumerator WaitForSound(AudioSource source, GameObject panel)
     {
+        //show the answers once the source is done playing the audio and hide the panel
         yield return new WaitUntil(() => source.isPlaying == false);
         ShowAnswers();
         HidePanel(panel);
@@ -250,29 +235,43 @@ public class JeanneManager : MonoBehaviour
 
     private IEnumerator FalseEnum(GameObject panel)
     {
+        //if false, wait for three seconds to hide the "false" panel
         yield return new WaitForSeconds(3);
         HidePanel(panel);
     }
     private void ShowAnswers()
     {
+        //once the song is done playing we call this to show the possible choices
         answerPanel.SetActive(true);
-        //print("hey, i got here bro!");
     }
 
     private void HidePanel(GameObject panel)
     {
+        //set the sent panel to hidden
         panel.SetActive(false);
     }
 
     private void ShowPanel(GameObject panel)
     {
+        //set the sent panel to shown
         panel.SetActive(true);
     }
     private void SetTexts(int corButt, Song s)
     {
+        //this method will set the texts related to each button to a certain option
+        //to either the correct answer OR a false one that I choose to make.
         string songText = "";
         string wrongText = "";
         string wrongText2 = "";
+        //this switch statement is weird.
+        /* We base it off what the correct button is. Then we choose cases
+         * of which song is playing based on the state, and picks the texts
+         * in regards to that. FOR EXAMPLE:
+         *      if the state indicates we are at immigrant song, and the left button is the correct one (as chosen in GuessButtons script for each button)
+         *      we set the correct song text to *song text* and the other two to random answers.
+         *      THEN we set the actual in-game UI texts to their respective texts. 
+         *      This example is the first one shown below:
+         */
         switch(corButt)
         {
             //left button
@@ -349,4 +348,5 @@ public class JeanneManager : MonoBehaviour
                 break;
         }
     }
+    #endregion
 }

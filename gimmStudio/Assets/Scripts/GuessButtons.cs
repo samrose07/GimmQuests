@@ -1,12 +1,20 @@
+/* This script was created by Samuel Rose for the GIMMStudio space, focused for quests.
+ * 
+ * The purpose of this script is to provide a light framework for the buttons.
+ *              
+ * Biodigital jazz, man
+ */
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GuessButtons : MonoBehaviour
 {
-    [Tooltip("Which button is this? Order left to right, 1-3")]
+    [Tooltip("Which button is this? Order right to left, for some reason, 1-3")]
     public int whichButton;
 
+    //once pressed, send the managerclass the object and which button it is in the order. Called by onRelease when the button is done
+    //OR by when the non-vr player presses the respective interact key.
     public void ThisButtonPressed()
     {
         print("pressed");

@@ -2,6 +2,8 @@
  * 
  * The purpose of this script is to act as a "brain" for the lil robot boi
  * that will accomplish tasks.
+ * 
+ * I apologize for the italian dish this code is, but it works!
  *              
  * Biodigital jazz, man
  */
@@ -10,17 +12,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-/*TODO:
- *  list of pedestals, list of placeable objects.
- *  navmesh, target to object that has same name as what player is holding + "for robot"
- *  move to pedestal when player places object on pedestal
- *  if object player is holding is on pedestal, remove it
- *  if object is not held and not on pedestal, drop object.
- *  
- * 
- */
 public class JacksLilBuddy : MonoBehaviour
 {
+    #region variables and states
     public GameObject objectToGet;
     public GameObject pedestalToPlaceUpon;
     public float distanceToPedestal = 0;
@@ -40,6 +34,10 @@ public class JacksLilBuddy : MonoBehaviour
     }
 
     private State state;
+
+    #endregion
+
+    #region start and update
     // Start is called before the first frame update
     void Start()
     {
@@ -54,6 +52,12 @@ public class JacksLilBuddy : MonoBehaviour
         UpdateState(state);
     }
 
+    #endregion
+
+    #region created methods
+
+    //this method handles the states themselves, callign a function for each of them
+    //to do their respective things.
     void UpdateState(State currentState)
     {
         switch(currentState)
@@ -73,6 +77,10 @@ public class JacksLilBuddy : MonoBehaviour
         }
        // print(rem);
     }
+    /*This method returns the agent to a starting location, and only changes states if
+     * the public boolean GOGETTHEOBJECT is true. If so, the whole chain of command happens.
+     * If not, jus chill my boi
+     */
     void BeIdle()
     {
         if (agent.transform.position != baseLocation)
@@ -86,33 +94,30 @@ public class JacksLilBuddy : MonoBehaviour
         }
     }
 
+    /* this method checks to see if the robot is already holding an object or not.
+     * If it isn't, set the destination to the object determined by the pedestal
+     * that changed the state of the robot. I.E., player puts the cube on a pedestal,
+     * robot needs to get that cube.
+     *
+     */
     void MoveTowards()
     {
         if(!isHolding)
         {
-            //if (isOnPedestal)
-            //{
-            //    // move to pedestal, then pickup, else, move to object then pickup
-            //    agent.SetDestination(pedestalToPlaceUpon.transform.position);
-            //    float d = Vector3.Distance(agent.transform.position, agent.destination);
-            //    if (d <= distanceToPedestal)
-            //    {
-                    
-            //        state = State.Pickup;
-            //    }
-            //}
-            //else
-            //{
+            //once the robot gets near the object it has to pick up, switch the state to pickup.
+            //to optimize a bit, call the set destination only if the current destination is not equal to the needed destination. TODO.
                 agent.SetDestination(objectToGet.transform.position);
                 float d = Vector3.Distance(agent.transform.position, agent.destination);
                 if (d <= distanceToPedestal)
                 {
                     state = State.Pickup;
                 }
-            //}
         }
         else
         {
+            //if we are holding it, check to see if the player version of the object is on a pedestal.
+            //if so, the new destination is the pedestal related to it, and once we get near it,
+            //place it.
             if(isPlayerObjectOnPedestal)
             {
                 agent.SetDestination(pedestalToPlaceUpon.transform.position);
@@ -122,6 +127,8 @@ public class JacksLilBuddy : MonoBehaviour
                     state = State.Place;
                 }
             }
+            //if the related player object is not on the pedestal, then we can assume it was removed and we need to take
+            //the robot object away from the pedestal it is on. Destination is an arbitrary value here, can change to wherever.
             if(!isPlayerObjectOnPedestal)
             {
                 agent.SetDestination(new Vector3(7, 2, 10));
@@ -134,7 +141,16 @@ public class JacksLilBuddy : MonoBehaviour
         }
         
     }
-
+    
+    /* this method takes in a GameObject g that is the object the robot has to get.
+     * It is only called when the robot is near enough to the object.
+     * Sets the private var of isHolding to true to indicate ownership of the object.
+     * Then calls the local HoldObjectArea script to initiate the hold to get the correct location.
+     * has to turn on the kinematic bool in the rigidbody of the object so demorphing doesn't happen.
+     * Then it makes sure the objects respective script indicates that it's being held.
+     * Once this is done, set the destination in regards to whether or not the respective
+     * player object is on a pedestal or not, just like above.
+     */
     void PickupObject(GameObject g)
     {
         isHolding = true;
@@ -155,6 +171,13 @@ public class JacksLilBuddy : MonoBehaviour
         state = State.MoveTo;
     }
 
+    /* This method is the exact opposite of the one above. The differences here are
+     * that we are giving the object being held its ownership back.
+     * Then we are setting the transform parent to the pedestal IF that's where we are.
+     * Otherwise, we jus droppin it yannowhatimsayin.
+     * After that, return the public vars to the original state so we can start again,
+     * and set the state to IDLE.
+     */
     void PlaceObject()
     {
         isHolding = false;
@@ -180,362 +203,8 @@ public class JacksLilBuddy : MonoBehaviour
         pedestalToPlaceUpon = null;
         GOGETTHEOBJECT = false;
         isOnPedestal = false;
-        //isPlayerObjectOnPedestal = false;
-        print("i got here");
         state = State.idle;
-        
-
     }
-    //public void ObjectToGrab(GameObject g)
-    //{
-    //    objectToGet = g;
-    //}
-
-    //public void RetrieveObject(GameObject g, GameObject pedestal, bool removeFromPedestal)
-    //{
-    //    if(removeFromPedestal)
-    //    {
-    //        RemoveFromPedestal(g, pedestal, new Vector3(7, 2, 10));
-    //    }
-    //    if(!removeFromPedestal)
-    //    {
-    //        bool GotObj = GetObj(g);
-    //        if(GotObj)
-    //        {
-    //            PlaceOnPedestal(g, pedestal);
-    //            return;
-    //        }
-    //        else
-    //        {
-
-    //            RetrieveObject(g, pedestal, removeFromPedestal);
-    //            return;
-    //        }
-    //    }
-    //}
-
-    //public bool GetObj(GameObject g)
-    //{
-    //    if(isHolding)
-    //    {
-    //        return true;
-    //    }
-    //    else
-    //    {
-    //        MoveToObject(g);
-    //        return false;
-    //    }
-    //}
-
-    //private void MoveToObject(GameObject g)
-    //{
-    //    agent.SetDestination(g.transform.position);
-    //    float distance = Vector3.Distance(g.transform.position, agent.transform.position);
-    //    if(distance <= 2)
-    //    {
-    //        hoa.HoldObject(g);
-    //        isHolding = true;
-    //    }
-    //    return;
-    //}
-
-    //public void PlaceOnPedestal(GameObject g, GameObject pedestal)
-    //{
-
-    //    float distance = Vector3.Distance(agent.transform.position, pedestal.transform.position);
-    //    if(distance <= 2)
-    //    {
-    //        Pedestal p = pedestal.GetComponent<Pedestal>();
-    //        p.Place(g);
-    //        objectToGet = null;
-    //    }
-    //}
-
-    //public void RemoveFromPedestal(GameObject objToRemove, GameObject pedestal, Vector3 newPositionToPutObject)
-    //{
-    //    float distance = Vector3.Distance(agent.transform.position, pedestal.transform.position);
-    //    if (distance >= 3)
-    //    {
-    //        agent.SetDestination(pedestal.transform.position);
-    //        RemoveFromPedestal(objToRemove, pedestal, newPositionToPutObject);
-    //    }
-    //    else
-    //    {
-    //        hoa.HoldObject(objToRemove);
-    //        MoveTo(newPositionToPutObject, true);
-    //    }
-    //}
-
-    //public void MoveTo(Vector3 Loc, bool placeObjectOnGround)
-    //{
-    //    float distance = Vector3.Distance(agent.transform.position, Loc);
-    //    if (distance >= 3)
-    //    {
-    //        agent.SetDestination(Loc);
-    //        MoveTo(Loc, placeObjectOnGround);
-    //    }
-    //    else
-    //    {
-    //        hoa.StopHoldObject(objectToGet);
-    //        objectToGet = null;
-    //    }
-    //}
-    //void BeIdle()
-    //{
-    //    bool onPedestal;
-    //    agent.isStopped = true;
-    //    foreach(Pedestal p in playerPedestals)
-    //    {
-    //        if(p.hasObject)
-    //        {
-    //            onPedestal = CheckIfRelatedObjectIsOnPedestal(p.heldObject);
-    //            if (onPedestal)
-    //            {
-    //                state = State.idle;
-    //            }
-    //            else
-    //            {
-    //                print("fkn got here too m8");
-    //                StartFindObj(p.heldObject.name, false);
-    //            }
-
-    //        }
-    //    }
-    //    foreach(GameObject g in playersObjects)
-    //    {
-    //        PlaceableObject pobj;
-    //        pobj = g.GetComponent<PlaceableObject>();
-    //        if(!pobj.isHeld && !pobj.isHeldinArea)
-    //        {
-    //            foreach(GameObject g2 in placeableGameObjects)
-    //            {
-    //                if(g2.GetComponent<PlaceableObject>().isHeldinArea)
-    //                {
-    //                    rem = true;
-    //                }
-    //            }
-
-    //            StartFindObj(pobj.gameObject.name, true);
-    //        }
-    //        else
-    //        {
-    //            rem = false;
-    //        }
-    //    }
-
-    //}
-    //bool CheckIfRelatedObjectIsOnPedestal(GameObject g)
-    //{
-    //    bool retVal = true;
-    //    //print(g.name);
-    //    if(!g.name.Contains(addString))
-    //    {
-    //        g.name = g.name + addString;
-    //    }
-
-    //   // print(g.name);
-    //    foreach (GameObject gO in placeableGameObjects)
-    //    {
-    //        if(gO.name == g.name && !gO.GetComponent<PlaceableObject>().isHeldinArea)
-    //        {
-    //            retVal = false;
-    //        }
-    //    }
-    //    return retVal;
-    //}
-    //void StartFindObj(string name, bool remove)
-    //{
-
-    //    string nameString = name;
-    //    print(nameString);
-    //    objectToGoTo = GameObject.Find(nameString);
-    //    if(!remove)
-    //    {
-    //        if (objectToGoTo != null)
-    //        {
-    //            SetDest(objectToGoTo, remove);
-    //            state = State.MoveTo;
-
-    //        }
-    //    }
-    //    else
-    //    {
-    //        if(objectToGoTo != null)
-    //        {
-    //            SetDest(objectToGoTo, remove);
-    //            state = State.MoveTo;
-    //        }
-    //    }
-
-    //}
-    //void SetDest(GameObject g, bool remove)
-    //{
-    //    if (remove)
-    //    {
-    //        curDest = g;
-    //        if(isHolding)
-    //        {
-    //            curDest.transform.position = new Vector3(7f, 1f, 0f);
-    //        }
-    //        else
-    //        {
-    //            curDest = g;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        curDest = g;
-    //        if (g.gameObject.name.Contains("pedestal"))
-    //        {
-    //            if (g.GetComponent<Pedestal>().hasObject)
-    //            {
-    //                currentPedestalIndex += 1;
-    //                if (currentPedestalIndex == robotPedestals.Count) currentPedestalIndex = 0;
-    //                //agent.SetDestination(robotPedestals[currentPedestalIndex].transform.position);
-    //                curDest = robotPedestals[currentPedestalIndex].gameObject;
-    //            }
-    //        }
-    //        agent.SetDestination(curDest.transform.position);
-    //    }
-
-    //}
-
-    //void MoveTowards()
-    //{
-    //    agent.isStopped = false;
-    //    float distance = Vector3.Distance(gameObject.transform.position, agent.destination);
-    //    if(distance <= 3)
-    //    {
-    //        if (isHolding) state = State.Place;
-    //        if (!isHolding) state = State.Pickup;
-    //    }
-    //}
-
-    //void PickupObject(GameObject obj, bool remove)
-    //{
-    //    if(remove)
-    //    {
-    //        heldObj = obj;
-    //        isHolding = true;
-    //        hoa.HoldObject(heldObj);
-    //        Rigidbody rb = heldObj.GetComponent<Rigidbody>();
-    //        rb.isKinematic = true;
-    //        SetDest(obj, remove);
-    //        state = State.MoveTo;
-    //    }
-    //    if(!remove)
-    //    {
-    //        heldObj = obj;
-    //        isHolding = true;
-    //        hoa.HoldObject(heldObj);
-    //        Rigidbody rb;
-    //        rb = heldObj.GetComponent<Rigidbody>();
-    //        rb.isKinematic = true;
-    //        SetDest(robotPedestals[currentPedestalIndex].gameObject, false);
-    //        state = State.MoveTo;
-    //    }
-
-    //}
-
-    //void PlaceObject(bool remove)
-    //{
-    //    agent.isStopped = true;
-    //    if(remove)
-    //    {
-    //        hoa.StopHoldObject(heldObj);
-    //        heldObj.GetComponent<PlaceableObject>().isHeldinArea = false;
-    //        isHolding = false;
-    //        state = State.idle;
-    //    }
-    //    if (!remove)
-    //    {
-    //        if (playerHoldingObject)
-    //        {
-    //            return;
-    //        }
-    //        if (heldObj)
-    //        {
-    //            hoa.StopHoldObject(heldObj);
-    //            Pedestal p = curDest.GetComponent<Pedestal>();
-    //            if (p != null)
-    //            {
-    //                heldObj.transform.parent = p.placementArea;
-    //                heldObj.transform.position = p.placementArea.transform.position;
-    //                p.hasObject = true;
-    //            }
-    //            heldObj.GetComponent<PlaceableObject>().isHeldinArea = true;
-    //            isHolding = false;
-    //            //heldObj = null;
-    //            state = State.idle;
-    //        }
-    //    }
-
-
-    /*void BeIdle()
-    {
-        agent.isStopped = true;
-        //play an animation
-        if(playerHoldingObject)
-        {
-            StartFindObj(objectHeldByPlayer.name);
-        }
-    }
-
-    void MoveTowards()
-    {
-        agent.isStopped = false;
-        float distance = Vector3.Distance(gameObject.transform.position, agent.destination);
-        if(distance <= 3)
-        {
-            if(isHolding)
-            {
-                state = State.Place;
-            }
-            if(!isHolding)
-            {
-                state = State.Pickup;
-            }
-        }
-    }
-
-    private void PickupObject(GameObject obj)
-    {
-        heldObj = obj;
-        isHolding = true;
-        hoa.HoldObject(heldObj);
-        Rigidbody rb;
-        rb = heldObj.GetComponent<Rigidbody>();
-        rb.isKinematic = true;
-        SetDest(robotPedestals[currentPedestalIndex]);
-        state = State.MoveTo;
-    }
-
-    void PlaceObject()
-    {
-        agent.isStopped = true;
-        if(playerHoldingObject)
-        {
-            return;
-        }
-        else
-        {
-            hoa.StopHoldObject(heldObj);
-            Pedestal p = curDest.GetComponent<Pedestal>();
-            if (p != null)
-            {
-                heldObj.transform.parent = p.placementArea;
-                heldObj.transform.position = p.placementArea.transform.position;
-                p.hasObject = true;
-            }
-            isHolding = false;
-            //heldObj = null;
-            state = State.idle;
-        }
-
-    }
-
-
-   */
-
-    }
+    #endregion 
+}
 
