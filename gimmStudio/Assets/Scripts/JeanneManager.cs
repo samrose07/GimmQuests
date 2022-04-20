@@ -15,11 +15,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class JeanneManager : MonoBehaviour
 {
     #region variables
-
+    [SerializeField] private bool canGo = false;
     [SerializeField] private AudioClip isongQuestion;
     [SerializeField] private AudioClip isongAnswer;
     [SerializeField] private AudioClip takeItEasyQuestion;
@@ -31,9 +32,10 @@ public class JeanneManager : MonoBehaviour
     [SerializeField] private bool immigrantPlayed = false;
     [SerializeField] private bool takeItEasyPlayed = false;
     [SerializeField] private bool gimmeThreeStepsPlayed = false;
-    [SerializeField] private Text leftText;
-    [SerializeField] private Text centerText;
-    [SerializeField] private Text rightText;
+    [SerializeField] private TMP_Text leftText;
+    [SerializeField] private TMP_Text centerText;
+    [SerializeField] private TMP_Text rightText;
+    [SerializeField] private TMP_Text doneText;
     private int correctText1 = 0;
     private int correctText2 = 0;
     private int correctText3 = 0;
@@ -99,38 +101,48 @@ public class JeanneManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(currentSong == Song.Nu)
+        if(canGo)
         {
-            print("YOU DID IT YAYYYY");
+            if (currentSong == Song.Nu)
+            {
+                correctPanel.SetActive(true);
+                doneText.text = "YOU DID IT! Collect your artifact nearby!";
+            }
+            switch (currentSong)
+            {
+                case Song.Immigrant:
+                    correctButton = firstCorrectButton;
+                    SetTexts(correctButton, Song.Immigrant);
+                    questionClipToUse = isongQuestion;
+                    answerClipToUse = isongAnswer;
+                    immigrantPlayed = InitialSoundPlayed(questionClipToUse, immigrantPlayed);
+                    break;
+                case Song.Take:
+                    correctButton = secondCorrectButton;
+                    SetTexts(correctButton, Song.Take);
+                    questionClipToUse = takeItEasyQuestion;
+                    answerClipToUse = takeItEasyAnswer;
+                    takeItEasyPlayed = InitialSoundPlayed(questionClipToUse, takeItEasyPlayed);
+                    break;
+                case Song.Gimme:
+                    correctButton = thirdCorrectButton;
+                    SetTexts(correctButton, Song.Gimme);
+                    questionClipToUse = gimmeThreeStepsQuestion;
+                    answerClipToUse = gimmeThreeStepsAnswer;
+                    gimmeThreeStepsPlayed = InitialSoundPlayed(questionClipToUse, gimmeThreeStepsPlayed);
+                    break;
+            }
         }
-        switch(currentSong)
-        {
-            case Song.Immigrant:
-                correctButton = firstCorrectButton;
-                SetTexts(correctButton, Song.Immigrant);
-                questionClipToUse = isongQuestion;
-                answerClipToUse = isongAnswer;
-                immigrantPlayed = InitialSoundPlayed(questionClipToUse, immigrantPlayed);
-                break;
-            case Song.Take:
-                correctButton = secondCorrectButton;
-                SetTexts(correctButton, Song.Take);
-                questionClipToUse = takeItEasyQuestion;
-                answerClipToUse = takeItEasyAnswer;
-                takeItEasyPlayed = InitialSoundPlayed(questionClipToUse, takeItEasyPlayed);
-                break;
-            case Song.Gimme:
-                correctButton = thirdCorrectButton;
-                SetTexts(correctButton, Song.Gimme);
-                questionClipToUse = gimmeThreeStepsQuestion;
-                answerClipToUse = gimmeThreeStepsAnswer;
-                gimmeThreeStepsPlayed = InitialSoundPlayed(questionClipToUse, gimmeThreeStepsPlayed);
-                break;
-        }
+        
     }
     #endregion
 
     #region created methods
+
+    public void CanNowGo()
+    {
+        canGo = true;
+    }
     private bool InitialSoundPlayed(AudioClip c, bool played)
     {
         //this method takes in an audioclip to play and checks if its been played already.
@@ -164,6 +176,7 @@ public class JeanneManager : MonoBehaviour
         }
         else
         {
+            print("else inside nFLTRB");
             ShowPanel(falsePanel);
             StartCoroutine(FalseEnum(falsePanel));
         }
@@ -279,19 +292,19 @@ public class JeanneManager : MonoBehaviour
                 switch(s)
                 {
                     case Song.Immigrant:
-                        songText = "ImmigrantSong";
-                        wrongText = "not immsong";
-                        wrongText2 = "idek bro";
+                        songText = "From the midnight sun, where the hot springs flow";
+                        wrongText = "Where my heart is cold covered in gold";
+                        wrongText2 = "From the wolf howls that midnight oil";
                         break;
                     case Song.Gimme:
-                        songText = "GimmeSong";
-                        wrongText = "not gimme";
-                        wrongText2 = "idek hehe";
+                        songText = "Lookin' for you know who";
+                        wrongText = "Mad that I stole his boo";
+                        wrongText2 = "Jealous I was too cool";
                         break;
                     case Song.Take:
-                        songText = "Take song";
-                        wrongText = "not take";
-                        wrongText2 = "idek lmao";
+                        songText = "Slowin' down to take a look at me";
+                        wrongText = "Lookin' at all the sights to see";
+                        wrongText2 = "Singin' me a little symphony";
                         break;
                 }
                 leftText.text = songText;
@@ -303,19 +316,19 @@ public class JeanneManager : MonoBehaviour
                 switch (s)
                 {
                     case Song.Immigrant:
-                        songText = "ImmigrantSong";
-                        wrongText = "not immsong";
-                        wrongText2 = "idek bro";
+                        songText = "From the midnight sun, where the hot springs flow";
+                        wrongText = "Where my heart is cold covered in gold";
+                        wrongText2 = "From the wolf howls that midnight oil";
                         break;
                     case Song.Gimme:
-                        songText = "GimmeSong";
-                        wrongText = "not gimme";
-                        wrongText2 = "idek hehe";
+                        songText = "Lookin' for you know who";
+                        wrongText = "Mad that I stole his boo";
+                        wrongText2 = "Jealous I was too cool";
                         break;
                     case Song.Take:
-                        songText = "Take song";
-                        wrongText = "not take";
-                        wrongText2 = "idek lmao";
+                        songText = "Slowin' down to take a look at me";
+                        wrongText = "Lookin' at all the sights to see";
+                        wrongText2 = "Singin' me a little symphony";
                         break;
                 }
                 centerText.text = songText;
@@ -327,19 +340,19 @@ public class JeanneManager : MonoBehaviour
                 switch (s)
                 {
                     case Song.Immigrant:
-                        songText = "ImmigrantSong";
-                        wrongText = "not immsong";
-                        wrongText2 = "idek bro";
+                        songText = "From the midnight sun, where the hot springs flow";
+                        wrongText = "Where my heart is cold covered in gold";
+                        wrongText2 = "From the wolf howls that midnight oil";
                         break;
                     case Song.Gimme:
-                        songText = "GimmeSong";
-                        wrongText = "not gimme";
-                        wrongText2 = "idek hehe";
+                        songText = "Lookin' for you know who";
+                        wrongText = "Mad that I stole his boo";
+                        wrongText2 = "Jealous I was too cool";
                         break;
                     case Song.Take:
-                        songText = "Take song";
-                        wrongText = "not take";
-                        wrongText2 = "idek lmao";
+                        songText = "Slowin' down to take a look at me";
+                        wrongText = "Lookin' at all the sights to see";
+                        wrongText2 = "Singin' me a little symphony";
                         break;
                 }
                 rightText.text = songText;

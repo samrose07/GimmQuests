@@ -25,6 +25,7 @@ public class JacksLilBuddy : MonoBehaviour
     public bool isHolding = false;
     public HoldObjectArea hoa;
     private Vector3 baseLocation;
+    [SerializeField] private Vector3 dropLocation;
     public enum State
     {
         idle,
@@ -131,7 +132,7 @@ public class JacksLilBuddy : MonoBehaviour
             //the robot object away from the pedestal it is on. Destination is an arbitrary value here, can change to wherever.
             if(!isPlayerObjectOnPedestal)
             {
-                agent.SetDestination(new Vector3(7, 2, 10));
+                agent.SetDestination(dropLocation);
                 float d = Vector3.Distance(agent.transform.position, agent.destination);
                 if (d <= distanceToPedestal)
                 {
@@ -162,7 +163,7 @@ public class JacksLilBuddy : MonoBehaviour
         p.isHeld = true;
         if(!isPlayerObjectOnPedestal)
         {
-            agent.SetDestination(new Vector3(7, 2, 10));
+            agent.SetDestination(dropLocation);
         }
         else
         {
