@@ -69,6 +69,7 @@ public class InventoryHandler : MonoBehaviour
             inventory.Add(g);
             inventoryPanel.SetActive(true);
             Invoke("InventoryDisplay", 3);
+            g.SetActive(false);
 
         }
         

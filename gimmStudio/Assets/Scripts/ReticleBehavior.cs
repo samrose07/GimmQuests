@@ -82,7 +82,6 @@ public class ReticleBehavior : MonoBehaviour
         switch(input)
         {
             case "f":
-                print(raycastedObj.name);
                 bool active = CheckActiveState(raycastedObj);
                 bool isInteractable = CheckTag(raycastedObj);
                 if(isInteractable && active)
@@ -116,7 +115,6 @@ public class ReticleBehavior : MonoBehaviour
         {
             if (holdTime >= holdThreshold && !objectHeld)
             {
-                print(raycastedObj.name);
                 if(raycastedObj.name.Contains("pickup")) PickupObject(raycastedObj);
                 holdTime = 0;
                 return;

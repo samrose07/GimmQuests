@@ -186,18 +186,20 @@ public class JacksLilBuddy : MonoBehaviour
         Rigidbody rb;
         rb = objectToGet.GetComponent<Rigidbody>();
         rb.isKinematic = false;
+        PlaceableObject p = objectToGet.GetComponent<PlaceableObject>();
+        p.isHeld = false;
         if (!isPlayerObjectOnPedestal)
         {
             hoa.StopHoldObject(objectToGet);
         }
         if (pedestalToPlaceUpon != null)
         {
-            Pedestal p = pedestalToPlaceUpon.GetComponent<Pedestal>();
+            Pedestal p2 = pedestalToPlaceUpon.GetComponent<Pedestal>();
             if (p != null)
             {
-                objectToGet.transform.parent = p.placementArea;
-                objectToGet.transform.position = p.placementArea.transform.position;
-                p.hasObject = true;
+                objectToGet.transform.parent = p2.placementArea;
+                objectToGet.transform.position = p2.placementArea.transform.position;
+                p2.hasObject = true;
             }
         }
         objectToGet = null;

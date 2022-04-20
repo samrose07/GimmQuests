@@ -44,6 +44,9 @@ public class JeanneManager : MonoBehaviour
     [SerializeField] private GameObject playingPanel;
     [SerializeField] private GameObject falsePanel;
     [SerializeField] private GameObject correctPanel;
+    private bool complete = false;
+    [SerializeField] private GameObject artifactGlass;
+    [SerializeField] private GameObject artifact;
     private enum Song
     {
         Immigrant,
@@ -101,12 +104,20 @@ public class JeanneManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(complete && artifactGlass.activeInHierarchy)
+        {
+            artifactGlass.SetActive(false);
+            artifact.AddComponent<Rigidbody>();
+            artifact.AddComponent<MeshCollider>();
+            artifact.GetComponent<MeshCollider>().convex = true;
+        }
         if(canGo)
         {
             if (currentSong == Song.Nu)
             {
                 correctPanel.SetActive(true);
                 doneText.text = "YOU DID IT! Collect your artifact nearby!";
+                complete = true;
             }
             switch (currentSong)
             {

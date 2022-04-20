@@ -13,5 +13,34 @@ using UnityEngine;
 
 public class JackManager : MonoBehaviour
 {
-    
+    [SerializeField] private Pedestal[] robotPedestals;
+    private int amountOfCorrectObjectsOnPedestals = 0;
+    [SerializeField] private GameObject artifactGlass;
+    [SerializeField] private GameObject artifact;
+    private bool canAdd = true;
+
+    private void Update()
+    {
+        CheckPedestals();
+    }
+
+    void CheckPedestals()
+    {
+        amountOfCorrectObjectsOnPedestals = 0;
+        foreach(Pedestal p in robotPedestals)
+        {
+            if (p.hasCorrectGO) amountOfCorrectObjectsOnPedestals++;
+        }
+        if (amountOfCorrectObjectsOnPedestals == 3) ExecuteOrderGiveArtifact();
+    }
+
+    void ExecuteOrderGiveArtifact()
+    {
+        if(canAdd)
+        {
+            artifactGlass.SetActive(false);
+            artifact.AddComponent<Rigidbody>();
+        }
+        canAdd = false;
+    }
 }
