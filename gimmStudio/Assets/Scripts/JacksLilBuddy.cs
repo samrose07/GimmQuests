@@ -15,6 +15,7 @@ using UnityEngine.AI;
 public class JacksLilBuddy : MonoBehaviour
 {
     #region variables and states
+    public GameObject myArms;
     public GameObject objectToGet;
     public GameObject pedestalToPlaceUpon;
     public float distanceToPedestal = 0;
@@ -25,6 +26,7 @@ public class JacksLilBuddy : MonoBehaviour
     public bool isHolding = false;
     public HoldObjectArea hoa;
     private Vector3 baseLocation;
+    [SerializeField] private GameObject dropArea;
     [SerializeField] private Vector3 dropLocation;
     public enum State
     {
@@ -45,6 +47,7 @@ public class JacksLilBuddy : MonoBehaviour
         state = State.idle;
         agent = GetComponent<NavMeshAgent>();
         baseLocation = transform.position;
+        dropLocation = dropArea.transform.position;
     }
 
     // Update is called once per frame
@@ -169,6 +172,7 @@ public class JacksLilBuddy : MonoBehaviour
         {
             agent.SetDestination(pedestalToPlaceUpon.transform.position);
         }
+        myArms.transform.Rotate(new Vector3(90, 0, 0));
         state = State.MoveTo;
     }
 
@@ -206,6 +210,7 @@ public class JacksLilBuddy : MonoBehaviour
         pedestalToPlaceUpon = null;
         GOGETTHEOBJECT = false;
         isOnPedestal = false;
+        myArms.transform.Rotate(new Vector3(-90, 0, 0));
         state = State.idle;
     }
     #endregion 

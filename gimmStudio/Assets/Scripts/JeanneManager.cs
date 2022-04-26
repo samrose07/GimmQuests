@@ -107,9 +107,7 @@ public class JeanneManager : MonoBehaviour
         if(complete && artifactGlass.activeInHierarchy)
         {
             artifactGlass.SetActive(false);
-            artifact.AddComponent<Rigidbody>();
-            artifact.AddComponent<MeshCollider>();
-            artifact.GetComponent<MeshCollider>().convex = true;
+            if(!artifact.GetComponent<Rigidbody>()) artifact.AddComponent<Rigidbody>();
         }
         if(canGo)
         {

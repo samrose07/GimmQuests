@@ -18,10 +18,28 @@ public class JackManager : MonoBehaviour
     [SerializeField] private GameObject artifactGlass;
     [SerializeField] private GameObject artifact;
     private bool canAdd = true;
+    [SerializeField] private AudioSource robotAudioSource;
+    [SerializeField] private bool playSong = false;
+    [SerializeField] private GameObject robot;
+    [SerializeField] private float rotateY = -.1f;
+    [SerializeField] private GameObject[] robotAttaches;
+    bool canInvoke = true;
 
     private void Update()
     {
         CheckPedestals();
+        if(playSong)
+        {
+            robot.transform.Rotate(new Vector3(0, rotateY, 0));
+            if (canInvoke) Invoke("ChangeDir", 1);
+            canInvoke = false;
+        }
+    }
+
+    void ChangeDir()
+    {
+        rotateY *= -1;
+        canInvoke = true;
     }
 
     void CheckPedestals()
@@ -40,6 +58,10 @@ public class JackManager : MonoBehaviour
         {
             artifactGlass.SetActive(false);
             artifact.AddComponent<Rigidbody>();
+            robotAudioSource.Play();
+            playSong = true;
+            robot.GetComponent<JacksLilBuddy>().myArms.transform.Rotate(new Vector3(90, 0, 0));
+            foreach (GameObject g in robotAttaches) g.SetActive(true);
         }
         canAdd = false;
     }
