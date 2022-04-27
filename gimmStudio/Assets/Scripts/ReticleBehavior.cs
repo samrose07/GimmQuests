@@ -78,31 +78,7 @@ public class ReticleBehavior : MonoBehaviour
 
     private void HandleSomeInputs()
     {
-        string input = Input.inputString;
-        switch(input)
-        {
-            case "f":
-                bool active = CheckActiveState(raycastedObj);
-                bool isInteractable = CheckTag(raycastedObj);
-                if(isInteractable && active)
-                {
-                    inventoryHandler.AddToInventory(raycastedObj);
-                    //raycastedObj.SetActive(false);
-                }
-                break;
-            case "e":
-                if(CheckTag(raycastedObj) && raycastedObj.name.Contains("3 collider"))
-                {
-                    GuessButtons gb = raycastedObj.GetComponent<GuessButtons>();
-                    if(gb != null)
-                    {
-                        gb.ThisButtonPressed();
-                    }
-                }
-                break;
-        }
-
-        if (Input.GetKey("e"))
+        if (Input.GetKey("e"))      //start hold down, increase time the longer it's held down
         {
             if(!objectHeld)
             {
@@ -113,17 +89,21 @@ public class ReticleBehavior : MonoBehaviour
         }
         if (Input.GetKeyUp("e"))
         {
-            if (holdTime >= holdThreshold && !objectHeld)
+            if (holdTime >= holdThreshold && !objectHeld)       //"hold to pickup", once we surpass the threshold pick up the obj
             {
                 if(raycastedObj.name.Contains("pickup")) PickupObject(raycastedObj);
                 holdTime = 0;
                 return;
             }
-            if(objectHeld)
+            if (objectHeld) DropObject(heldObj);        //if we're holding something, drop it
+            if (raycastedObj.name.Contains("3 collider"))       //if the object we are raycasting is a button, press it
             {
-                DropObject(heldObj);
+                GuessButtons gb = raycastedObj.GetComponent<GuessButtons>();
+                gb.ThisButtonPressed();
+                return;
             }
-            holdTime = 0;
+            if(holdTime < holdThreshold && !objectHeld && CheckTag(raycastedObj)) inventoryHandler.AddToInventory(raycastedObj);        //if none of the above but is a part of the interactables, add to inventory
+            holdTime = 0;       //reset holding time
         }
     }
 
